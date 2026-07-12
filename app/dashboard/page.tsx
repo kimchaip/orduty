@@ -172,19 +172,6 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-900 text-gray-100 p-6 relative">
       {/* Top-right buttons */}
       <div className="absolute top-4 right-4 flex gap-3">
-        {/* Debug JWT */}
-        <button
-          onClick={() => {
-            if (!session) return;
-            const decoded = jwtDecode(session.access_token);
-            console.log("Decoded JWT:", decoded);
-            alert(JSON.stringify(decoded, null, 2));
-          }}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow"
-        >
-          Debug JWT
-        </button>
-
         {/* Logout */}
         <button
           onClick={async () => {

@@ -74,16 +74,6 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-900 p-6">
-      <button
-        onClick={async () => {
-          await supabase.auth.signOut();
-          router.push("/login");
-        }}
-        className="absolute top-4 right-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-md transition"
-      >
-        Logout
-      </button>
-
       <div className="bg-gray-800/80 border border-gray-700 shadow-lg rounded-2xl p-8 w-full max-w-md backdrop-blur-sm">
         <h1 className="text-3xl font-semibold text-gray-100 mb-6 text-center">
           เข้าสู่ระบบ ORDuty
