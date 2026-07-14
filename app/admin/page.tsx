@@ -25,7 +25,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-
       {/* HEADER FIXED */}
       <div className="fixed top-0 left-0 right-0 bg-gray-900 z-50 px-4 py-3 flex justify-between items-center border-b border-gray-700">
         <h1 className="text-xl font-bold">Admin Dashboard</h1>
@@ -42,7 +41,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* TAB BAR FIXED */}
-      <div className="fixed top-[55px] left-0 right-0 bg-gray-800 z-40 px-3 py-2 flex gap-2 border-b border-gray-700">
+      <div className="fixed top-[55px] left-0 right-0 bg-gray-800 z-40 px-3 py-2 flex gap-2 border-b border-gray-700 overflow-x-auto whitespace-nowrap no-scrollbar touch-pan-x">
         {tabs.map((t) => (
           <button
             key={t.id}

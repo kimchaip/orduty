@@ -131,7 +131,7 @@ export default function EditStaffPage() {
         {/* 3 COLUMN LAYOUT */}
         <div className="grid grid-cols-4 md:grid-cols-4 gap-6">
           {/* LEFT COLUMN */}
-          <div className="md:col-span-1 flex flex-col gap-6">
+          <div className="col-span-1 md:col-span-1">
             {/* Active */}
             <div className="flex flex-col items-center gap-4">
               <label className="text-gray-400 text-sm">Active</label>
@@ -147,7 +147,7 @@ export default function EditStaffPage() {
           </div>
 
           {/* MIDDLE COLUMN */}
-          <div className="md:col-span-1 flex flex-col gap-6">
+          <div className="col-span-1 md:col-span-1">
             {/* Color block */}
             <div>
               <label className="text-gray-400 text-sm mb-1 block">Color</label>
@@ -165,7 +165,7 @@ export default function EditStaffPage() {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="md:col-span-2 flex flex-col gap-6">
+          <div className="col-span-2 md:col-span-2">
             {/* Role */}
             <SelectField
               label="Role"
