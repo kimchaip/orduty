@@ -16,11 +16,11 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("staff");
 
   const tabs = [
-    { id: "schedule", label: "Schedule" },
-    { id: "swapduty", label: "SwapDuty" },
-    { id: "calendar", label: "Calendar" },
-    { id: "shift", label: "Shift" },
-    { id: "staff", label: "Staff" },
+    { id: "schedule", label: "ตาราง" },
+    { id: "swapduty", label: "แลก" },
+    { id: "calendar", label: "ปฏิทิน" },
+    { id: "shift", label: "เวร" },
+    { id: "staff", label: "คน" },
   ];
 
   return (
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* TAB BAR FIXED */}
-      <div className="fixed top-[55px] left-0 right-0 bg-gray-800 z-40 px-3 py-2 flex gap-2 border-b border-gray-700 overflow-x-auto whitespace-nowrap no-scrollbar touch-pan-x">
+      <div className="fixed top-[50px] left-0 right-0 bg-gray-800 z-40 px-3 py-2 flex gap-2 border-b border-gray-700 overflow-x-auto whitespace-nowrap no-scrollbar touch-pan-x">
         {tabs.map((t) => (
           <button
             key={t.id}
