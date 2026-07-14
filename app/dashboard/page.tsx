@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import type { Session } from "@supabase/supabase-js";
 import { jwtDecode } from "jwt-decode";
+import { updateStaffOrder } from "@/lib/staff";
 
 type StaffEditForm = {
   name: string;
@@ -12,6 +13,9 @@ type StaffEditForm = {
   system_role: string;
   position1: string;
   position2: string;
+  duty_order: number;
+  display_order: number;
+  color: string;
   is_active: boolean;
   email: string;
   line_id: string;
@@ -36,6 +40,9 @@ export default function DashboardPage() {
     system_role: "",
     position1: "",
     position2: "",
+    duty_order: 0,
+    display_order: 0,
+    color: "#2596be",
     is_active: true,
     email: "",
     line_id: "",
@@ -66,8 +73,17 @@ export default function DashboardPage() {
       name: staffItem.name ?? "",
       full_name: staffItem.full_name ?? "",
       system_role: staffItem.system_role ?? "staff",
-      position1: staffItem.position1 && staffItem.position1.trim() !== "" ? staffItem.position1 : "RN",
-      position2: staffItem.position2 && staffItem.position2.trim() !== "" ? staffItem.position2 : "ชำนาญการ",
+      position1:
+        staffItem.position1 && staffItem.position1.trim() !== ""
+          ? staffItem.position1
+          : "RN",
+      position2:
+        staffItem.position2 && staffItem.position2.trim() !== ""
+          ? staffItem.position2
+          : "ชำนาญการ",
+      duty_order: staffItem.duty_order ?? 0,
+      display_order: staffItem.display_order ?? 0,
+      color: staffItem.color ?? "#2596be",
       is_active: staffItem.is_active ?? true,
       email: staffItem.email ?? "",
       line_id: staffItem.line_id ?? "",
@@ -95,12 +111,20 @@ export default function DashboardPage() {
       return;
     }
 
+    await updateStaffOrder(
+      editingStaff.id,
+      editForm.duty_order,
+      editForm.display_order,
+      editForm.color,
+    );
+
     const payload = {
       name: editForm.name,
       full_name: editForm.full_name,
       system_role: editForm.system_role,
       position1: editForm.position1,
       position2: editForm.position2,
+      color: editForm.color,
       is_active: editForm.is_active,
       email: editForm.email,
       line_id: editForm.line_id,
@@ -120,7 +144,7 @@ export default function DashboardPage() {
       const { data: staffData } = await supabase
         .from("staff")
         .select("*")
-        .order("full_name");
+        .order("duty_order", { ascending: true });
 
       setStaff(staffData ?? []);
       setEditingStaff(null);
@@ -154,7 +178,7 @@ export default function DashboardPage() {
       const { data: staffData, error } = await supabase
         .from("staff")
         .select("*")
-        .order("full_name");
+        .order("duty_order", { ascending: true });
 
       if (!error) {
         setStaff(staffData);
@@ -281,7 +305,11 @@ export default function DashboardPage() {
               <div>
                 <label className="text-gray-300">Position 1</label>
                 <select
-                  value={editForm.position1 && editForm.position1.trim() !== "" ? editForm.position1 : "RN"}
+                  value={
+                    editForm.position1 && editForm.position1.trim() !== ""
+                      ? editForm.position1
+                      : "RN"
+                  }
                   onChange={(e) =>
                     setEditForm({ ...editForm, position1: e.target.value })
                   }
@@ -296,7 +324,11 @@ export default function DashboardPage() {
               <div>
                 <label className="text-gray-300">Position 2</label>
                 <select
-                  value={editForm.position2 && editForm.position2.trim() !== "" ? editForm.position2 : "ชำนาญการ"}
+                  value={
+                    editForm.position2 && editForm.position2.trim() !== ""
+                      ? editForm.position2
+                      : "ชำนาญการ"
+                  }
                   onChange={(e) =>
                     setEditForm({ ...editForm, position2: e.target.value })
                   }
@@ -309,6 +341,52 @@ export default function DashboardPage() {
                   <option value="ประจำ">ประจำ</option>
                   <option value="พกส">พกส</option>
                 </select>
+              </div>
+              {/* Duty Order */}
+              <div className="mb-3">
+                <label className="block text-gray-300 mb-1">Duty Order</label>
+                <input
+                  type="number"
+                  value={editForm.duty_order}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      duty_order: Number(e.target.value),
+                    })
+                  }
+                  className="w-full p-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                />
+              </div>
+
+              {/* Display Order */}
+              <div className="mb-3">
+                <label className="block text-gray-300 mb-1">
+                  Display Order
+                </label>
+                <input
+                  type="number"
+                  value={editForm.display_order}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      display_order: Number(e.target.value),
+                    })
+                  }
+                  className="w-full p-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+                />
+              </div>
+
+              {/* Color Picker */}
+              <div className="mb-3">
+                <label className="block text-gray-300 mb-1">Color</label>
+                <input
+                  type="color"
+                  value={editForm.color}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, color: e.target.value })
+                  }
+                  className="w-20 h-10 p-1 rounded bg-gray-700 border border-gray-600"
+                />
               </div>
 
               {/* is_active */}

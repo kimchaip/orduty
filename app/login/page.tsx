@@ -22,7 +22,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/admin");
   }
 
   async function handleSignup() {
@@ -54,6 +54,7 @@ export default function LoginPage() {
       system_role: "staff",
       position1: "",
       position2: "",
+      color: "#2596be",
       is_active: true,
       line_id: "",
       main: [],
@@ -69,7 +70,7 @@ export default function LoginPage() {
     }
 
     alert("Signup สำเร็จ! พร้อมใช้งานแล้ว");
-    router.push("/dashboard");
+    router.push("/admin");
   }
 
   return (
