@@ -19,7 +19,7 @@ export default function StaffTabPage() {
 
       {/* ปุ่ม schedule by Staff */}
       <Link
-        href="/admin/schedule/staff"
+        href="/admin/tabs/schedule"
         className="block w-full bg-green-600 hover:bg-green-700 text-white 
                    px-4 py-3 rounded-lg text-center font-semibold"
       >
