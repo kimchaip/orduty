@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
 
-export default function EditStaffPage() {
+export default function StaffEditPage() {
   const router = useRouter();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [staff, setStaff] = useState<any>(null);
+
 
   const MAIN = ["ด", "ช", "บ"];
   const EXTEND = ["cvt", "avf", "uro", "fx"];
@@ -55,7 +56,7 @@ export default function EditStaffPage() {
     await supabase.from("staff").update(staff).eq("id", id);
 
     setSaving(false);
-    router.push("/admin");
+    router.push("/admin/staff");
   }
 
   if (loading) return <div className="text-gray-300 p-6">Loading...</div>;
@@ -71,7 +72,7 @@ export default function EditStaffPage() {
           Back
         </button>
 
-        <h1 className="text-xl font-bold">Edit Staff</h1>
+        <h1 className="text-xl font-bold">Edit</h1>
 
         <button
           onClick={saveStaff}

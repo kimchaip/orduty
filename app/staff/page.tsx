@@ -31,7 +31,7 @@ export default function StaffPage() {
       setRole(userRole);
 
       if (userRole === "admin") {
-        router.push("/dashboard");
+        router.push("/admin/tabs/staff");
         return;
       }
 

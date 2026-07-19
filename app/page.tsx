@@ -27,7 +27,7 @@ export default function Home() {
       const userRole = decoded.app_role ?? "authenticated";
 
       if (userRole === "admin") {
-        router.push("/admin");
+        router.push("/admin/tabs/staff");
       } else if (userRole === "staff") {
         router.push("/staff");
       } else {

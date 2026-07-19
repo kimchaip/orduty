@@ -22,7 +22,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/admin");
+    router.push("/admin/tabs/staff");
   }
 
   async function handleSignup() {
@@ -70,7 +70,7 @@ export default function LoginPage() {
     }
 
     alert("Signup สำเร็จ! พร้อมใช้งานแล้ว");
-    router.push("/admin");
+    router.push("/admin/tabs/staff");
   }
 
   return (

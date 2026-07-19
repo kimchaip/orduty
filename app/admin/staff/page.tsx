@@ -46,11 +46,39 @@ function SortableItem({
 }
 
 // ---------- StaffTab หลัก ----------
-export default function StaffTab() {
+export default function StaffListPage() {
   const router = useRouter();
   const [staff, setStaff] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [orderMode, setOrderMode] = useState<"duty" | "display">("duty");
+  const [search, setSearch] = useState("");
+
+  const filteredStaff = staff.filter((s) => {
+    const keywords = search
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter((k) => k.trim() !== "");
+
+    if (keywords.length === 0) return true;
+
+    const haystack = [
+      s.full_name,
+      s.name,
+      s.system_role,
+      s.position1,
+      s.position2,
+      JSON.stringify(s.main),
+      JSON.stringify(s.extra),
+      JSON.stringify(s.extend),
+      JSON.stringify(s.oncall_main),
+      JSON.stringify(s.oncall_extend),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    // OR search — คำไหนก็ได้
+    return keywords.every((kw) => haystack.includes(kw));
+  });
 
   async function loadStaff(mode: "duty" | "display" = orderMode) {
     const orderColumn = mode === "duty" ? "duty_order" : "display_order";
@@ -104,7 +132,7 @@ export default function StaffTab() {
     <div>
       {/* แถวบน: title + sort switch */}
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-bold text-gray-200">Staff</h2>
+        <h2 className="text-xl font-bold text-gray-200">ตั้งค่าคน</h2>
 
         <div className="flex items-center">
           <label className="text-gray-300 text-sm mr-2">Sort:</label>
@@ -118,6 +146,15 @@ export default function StaffTab() {
           </select>
         </div>
       </div>
+      <div className="flex items-center mb-3">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="ค้นหา.. เช่น ช,บ"
+          className="bg-gray-700 text-white p-2 rounded w-full text-sm"
+        />
+      </div>
 
       {/* list + drag&drop */}
       <DndContext
@@ -130,7 +167,7 @@ export default function StaffTab() {
           strategy={verticalListSortingStrategy}
         >
           <div className="flex flex-col gap-3">
-            {staff.map((s) => (
+            {filteredStaff.map((s) => (
               <SortableItem key={s.id} id={s.id}>
                 <StaffCard s={s} router={router} />
               </SortableItem>
@@ -143,7 +180,13 @@ export default function StaffTab() {
 }
 
 // ---------- StaffCard layout ----------
-function StaffCard({ s, router} : { s: any; router: ReturnType<typeof useRouter>;}) {
+function StaffCard({
+  s,
+  router,
+}: {
+  s: any;
+  router: ReturnType<typeof useRouter>;
+}) {
   const barColor = !s.is_active
     ? "#6b7280"
     : s.system_role === "admin"
