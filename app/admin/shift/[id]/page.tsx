@@ -9,7 +9,7 @@ import { ShiftForm } from "@/app/admin/shift/ShiftForm";
 export default function ShiftEditPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id;
+  const id = params.id; // ← ใช้แบบเดิมตามที่คุณต้องการ
 
   const [allShifts, setAllShifts] = useState<string[]>([]);
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
@@ -30,7 +30,6 @@ export default function ShiftEditPage() {
     forbid_tmr: [],
   });
 
-  // ฟังก์ชัน tone2
   function getTone2(s: Shift) {
     if (s.type === "main" && s.subtype === "leader") return "#ff00ff";
     if (s.type === "main" && s.subtype === "ortho") return "#01ef18";
@@ -40,16 +39,14 @@ export default function ShiftEditPage() {
     return s.color;
   }
 
-  // โหลดข้อมูล shift ทั้งหมด + sort + colorMap + subtypeMap + sort tag ของเวรนี้
+  // โหลดข้อมูลตามเดิม (ไม่แก้ load ซ้ำ)
   useEffect(() => {
     async function loadAll() {
-      // โหลด shift ทั้งหมด
       const { data: all } = await supabase.from("shift").select("*");
       if (!all) return;
 
       const sortedAll = sortShifts(all);
 
-      // โหลด shift ที่ต้องการแก้ไข
       const { data: target } = await supabase
         .from("shift")
         .select("*")
@@ -58,7 +55,6 @@ export default function ShiftEditPage() {
 
       if (!target) return;
 
-      // sort tag ของเวรนี้
       const sortedYes = sortedAll
         .filter((s) => target.forbid_yes?.includes(s.symbol))
         .map((s) => s.symbol);
@@ -71,7 +67,6 @@ export default function ShiftEditPage() {
         .filter((s) => target.forbid_tmr?.includes(s.symbol))
         .map((s) => s.symbol);
 
-      // setShift
       setShift({
         id: target.id,
         name: target.name,
@@ -89,30 +84,27 @@ export default function ShiftEditPage() {
 
       setOriginalSymbol(target.symbol);
 
-      // set allShifts + colorMap
       setAllShifts(sortedAll.map((s) => s.symbol));
       setColorMap(Object.fromEntries(sortedAll.map((s) => [s.symbol, s.color])));
-
-      // set subtypeMap สำหรับ tag 2-tone
       setSubtypeMap(
-        Object.fromEntries(
-          sortedAll.map((s) => [s.symbol, getTone2(s)])
-        )
+        Object.fromEntries(sortedAll.map((s) => [s.symbol, getTone2(s)]))
       );
     }
 
     loadAll();
-  }, [id]);
+  }, [id]); // ← ตามที่คุณต้องการ
 
   async function save() {
     const newSymbol = shift.symbol;
     const oldSymbol = originalSymbol;
 
-    // อัปเดตเวรนี้
+    // ❗ ลบ id ออกจาก body ก่อน update (แก้ Supabase error 400)
+    const { id: _ignore, ...shiftWithoutId } = shift;
+
     await supabase
       .from("shift")
       .update({
-        ...shift,
+        ...shiftWithoutId,
         symbol: newSymbol,
         forbid_yes: [...shift.forbid_yes],
         forbid_tdy: [...shift.forbid_tdy],
@@ -120,7 +112,6 @@ export default function ShiftEditPage() {
       })
       .eq("id", id);
 
-    // ถ้า symbol เปลี่ยน → update forbid ของเวรอื่น
     if (oldSymbol !== newSymbol) {
       await supabase.rpc("update_forbid_symbol", {
         oldsym: oldSymbol,
