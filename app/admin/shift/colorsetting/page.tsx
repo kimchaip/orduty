@@ -18,12 +18,12 @@ export default function ShiftColorSetting() {
     await supabase.from("color").update({ color: newColor }).eq("id", id);
 
     // update shift.color
-    await supabase.rpc("update_shift_color1");
+    await supabase.rpc("update_shift_color");
 
     // update shift.subcolor
-    await supabase.rpc("update_shift_color2");
+    await supabase.rpc("update_shift_subcolor");
 
-    const { data } = await supabase.from("color").select("*");
+    const { data } = await supabase.from("color").select("*").order("id");
     setColors(data || []);
   }
 

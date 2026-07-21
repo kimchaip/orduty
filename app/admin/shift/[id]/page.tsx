@@ -9,7 +9,7 @@ import { ShiftForm } from "@/app/admin/shift/ShiftForm";
 export default function ShiftEditPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id; // ← ใช้แบบเดิมตามที่คุณต้องการ
+  const id = params.id;
 
   const [allShifts, setAllShifts] = useState<string[]>([]);
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
@@ -23,7 +23,7 @@ export default function ShiftEditPage() {
     type: "main",
     subtype: "-",
     period: "ช",
-    color: "#90EE90",
+    color: "",
     subcolor: "",
     require_limit: 1,
     booking_limit: 0,
@@ -32,34 +32,29 @@ export default function ShiftEditPage() {
     forbid_tmr: [],
   });
 
-  function getTone2(s: Shift) {
-    if (s.type === "main" && s.subtype === "leader") return "#ff00ff";
-    if (s.type === "main" && s.subtype === "ortho") return "#01ef18";
-    if (s.type === "main" && s.subtype === "preop") return "#00ffff";
-    if ((s.type === "main" || s.type === "extend") && s.subtype === "oncall")
-      return "#c38bff";
-    return s.color;
-  }
-
+  /** apply สีจาก table color */
   function applyColorRules(s: Shift) {
     let color1 = s.color;
     let color2 = s.subcolor;
 
-    // หา color1 จาก type + period
+    // color1: type + period (main ต้อง match period)
     const rule1 = colorRules.find(
       (c) =>
         c.type === s.type &&
-        ((s.type === "main" && c.period === s.period) || s.type !== "main"),
+        ((s.type === "main" && c.period === s.period) ||
+          s.type !== "main")
     );
     if (rule1) color1 = rule1.color;
 
-    // หา color2 จาก subtype
+    // color2: subtype
     const rule2 = colorRules.find((c) => c.subtype === s.subtype);
     if (rule2) color2 = rule2.color;
+    else color2 = color1;
 
     return { ...s, color: color1, subcolor: color2 };
   }
 
+  /** handleChange เฉพาะ type/period/subtype ให้ apply สี */
   function handleChange(field: keyof Shift, value: any) {
     let updated = { ...shift, [field]: value };
 
@@ -70,7 +65,21 @@ export default function ShiftEditPage() {
     setShift(updated);
   }
 
-  // โหลดข้อมูลตามเดิม (ไม่แก้ load ซ้ำ)
+  /** โหลด table color */
+  useEffect(() => {
+    async function loadColors() {
+      const { data } = await supabase
+        .from("color")
+        .select("*")
+        .order("id", { ascending: true });
+
+      setColorRules(data || []);
+    }
+
+    loadColors();
+  }, []);
+
+  /** โหลดข้อมูล shift */
   useEffect(() => {
     async function loadAll() {
       const { data: all } = await supabase.from("shift").select("*");
@@ -98,41 +107,44 @@ export default function ShiftEditPage() {
         .filter((s) => target.forbid_tmr?.includes(s.symbol))
         .map((s) => s.symbol);
 
-      setShift({
+      // โหลด shift จาก DB ก่อน apply สี
+      let loadedShift: Shift = {
         id: target.id,
         name: target.name,
         symbol: target.symbol,
         period: target.period,
         type: target.type,
         subtype: target.subtype,
-        color: target.color,
-        subcolor: target.color,
+        color: target.color,      // จะถูก override โดย applyColorRules
+        subcolor: target.subcolor, // จะถูก override โดย applyColorRules
         require_limit: target.require_limit,
         booking_limit: target.booking_limit,
         forbid_yes: sortedYes,
         forbid_tdy: sortedTdy,
         forbid_tmr: sortedTmr,
-      });
+      };
 
+      // apply สีจาก table color
+      loadedShift = applyColorRules(loadedShift);
+
+      setShift(loadedShift);
       setOriginalSymbol(target.symbol);
 
       setAllShifts(sortedAll.map((s) => s.symbol));
-      setColorMap(
-        Object.fromEntries(sortedAll.map((s) => [s.symbol, s.color])),
-      );
+      setColorMap(Object.fromEntries(sortedAll.map((s) => [s.symbol, s.color])));
       setSubtypeMap(
-        Object.fromEntries(sortedAll.map((s) => [s.symbol, getTone2(s)])),
+        Object.fromEntries(sortedAll.map((s) => [s.symbol, s.subcolor]))
       );
     }
 
     loadAll();
-  }, [id]); // ← ตามที่คุณต้องการ
+  }, [id, colorRules]); // ← ต้องรอ colorRules ก่อน apply สี
 
+  /** save */
   async function save() {
     const newSymbol = shift.symbol;
     const oldSymbol = originalSymbol;
 
-    // ❗ ลบ id ออกจาก body ก่อน update (แก้ Supabase error 400)
     const { id: _ignore, ...shiftWithoutId } = shift;
 
     await supabase

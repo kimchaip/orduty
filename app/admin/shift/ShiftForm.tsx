@@ -2,23 +2,8 @@
 
 import { Shift, ShiftPeriod, ShiftType, ShiftSubtype } from "@/lib/shift";
 
-export function ShiftForm({
-  shift,
-  allShifts,
-  colorMap,
-  subtypeMap,
-  onChange,
-  onSave,
-  onCancel,
-}: {
-  shift: Shift;
-  allShifts: string[];
-  colorMap: Record<string, string>;
-  subtypeMap: Record<string, string>;
-  onChange: (field: keyof Shift, value: any) => void;
-  onSave: () => void;
-  onCancel: () => void;
-}) {
+export function ShiftForm({shift, allShifts, colorMap, subtypeMap, onChange, onSave, onCancel, }: 
+  {shift: Shift; allShifts: string[]; colorMap: Record<string, string>; subtypeMap: Record<string, string>; onChange: (field: keyof Shift, value: any) => void; onSave: () => void; onCancel: () => void; }) {
   return (
     <div className="flex flex-col gap-4">
 
