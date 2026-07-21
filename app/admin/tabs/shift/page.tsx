@@ -17,13 +17,13 @@ export default function ShiftTabPage() {
         ตั้งค่าเวร
       </Link>
 
-      {/* ปุ่ม schedule by Staff */}
+      {/* ปุ่ม setting color for Shift */}
       <Link
-        href="/admin/tabs/schedule"
+        href="/admin/shift/colorsetting"
         className="block w-full bg-green-600 hover:bg-green-700 text-white 
                    px-4 py-3 rounded-lg text-center font-semibold"
       >
-        ตารางคนต่อเวร
+        Shift Color Setting
       </Link>
 
     </div>

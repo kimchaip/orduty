@@ -12,14 +12,16 @@ export default function ShiftNewPage() {
   const [allShifts, setAllShifts] = useState<string[]>([]);
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
   const [subtypeMap, setSubtypeMap] = useState<Record<string, string>>({});
+  const [colorRules, setColorRules] = useState<any[]>([]);
 
   const [shift, setShift] = useState<Shift>({
     name: "",
     symbol: "",
     type: "main",
     subtype: "-",
-    period: "ด",
-    color: "#2596be",
+    period: "ช",
+    color: "#90EE90",
+    subcolor: "",
     require_limit: 1,
     booking_limit: 0,
     forbid_yes: [],
@@ -37,6 +39,47 @@ export default function ShiftNewPage() {
     return s.color;
   }
 
+  function applyColorRules(s: Shift) {
+    let color1 = s.color;
+    let color2 = s.subcolor;
+
+    // หา color1 จาก type + period
+    const rule1 = colorRules.find(
+      (c) => c.type === s.type && ((s.type === "main" && c.period === s.period) || (s.type !== "main")),
+    );
+    if (rule1) color1 = rule1.color;
+
+    // หา color2 จาก subtype
+    const rule2 = colorRules.find((c) => c.subtype === s.subtype);
+    if (rule2) color2 = rule2.color;
+
+    return { ...s, color: color1, subcolor: color2 };
+  }
+
+  function handleChange(field: keyof Shift, value: any) {
+    let updated = { ...shift, [field]: value };
+
+    if (field === "type" || field === "period" || field === "subtype") {
+      updated = applyColorRules(updated);
+    }
+
+    setShift(updated);
+  }
+
+  // โหลด table color
+  useEffect(() => {
+    async function loadColors() {
+      const { data } = await supabase
+        .from("color")
+        .select("*")
+        .order("id", { ascending: true });
+
+      setColorRules(data || []);
+    }
+
+    loadColors();
+  }, []);
+
   // โหลด shift ทั้งหมด + sort + colorMap + subtypeMap
   useEffect(() => {
     async function loadAll() {
@@ -50,7 +93,7 @@ export default function ShiftNewPage() {
 
       // subtypeMap สำหรับ tag 2-tone
       setSubtypeMap(
-        Object.fromEntries(sorted.map((s) => [s.symbol, getTone2(s)]))
+        Object.fromEntries(sorted.map((s) => [s.symbol, getTone2(s)])),
       );
     }
 
@@ -71,7 +114,7 @@ export default function ShiftNewPage() {
         allShifts={allShifts}
         colorMap={colorMap}
         subtypeMap={subtypeMap}
-        onChange={setShift}
+        onChange={handleChange}
         onSave={save}
         onCancel={() => router.push("/admin/shift")}
       />

@@ -15,6 +15,7 @@ export default function ShiftEditPage() {
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
   const [subtypeMap, setSubtypeMap] = useState<Record<string, string>>({});
   const [originalSymbol, setOriginalSymbol] = useState("");
+  const [colorRules, setColorRules] = useState<any[]>([]);
 
   const [shift, setShift] = useState<Shift>({
     name: "",
@@ -22,7 +23,8 @@ export default function ShiftEditPage() {
     type: "main",
     subtype: "-",
     period: "ช",
-    color: "#2596be",
+    color: "#90EE90",
+    subcolor: "",
     require_limit: 1,
     booking_limit: 0,
     forbid_yes: [],
@@ -37,6 +39,35 @@ export default function ShiftEditPage() {
     if ((s.type === "main" || s.type === "extend") && s.subtype === "oncall")
       return "#c38bff";
     return s.color;
+  }
+
+  function applyColorRules(s: Shift) {
+    let color1 = s.color;
+    let color2 = s.subcolor;
+
+    // หา color1 จาก type + period
+    const rule1 = colorRules.find(
+      (c) =>
+        c.type === s.type &&
+        ((s.type === "main" && c.period === s.period) || s.type !== "main"),
+    );
+    if (rule1) color1 = rule1.color;
+
+    // หา color2 จาก subtype
+    const rule2 = colorRules.find((c) => c.subtype === s.subtype);
+    if (rule2) color2 = rule2.color;
+
+    return { ...s, color: color1, subcolor: color2 };
+  }
+
+  function handleChange(field: keyof Shift, value: any) {
+    let updated = { ...shift, [field]: value };
+
+    if (field === "type" || field === "period" || field === "subtype") {
+      updated = applyColorRules(updated);
+    }
+
+    setShift(updated);
   }
 
   // โหลดข้อมูลตามเดิม (ไม่แก้ load ซ้ำ)
@@ -75,6 +106,7 @@ export default function ShiftEditPage() {
         type: target.type,
         subtype: target.subtype,
         color: target.color,
+        subcolor: target.color,
         require_limit: target.require_limit,
         booking_limit: target.booking_limit,
         forbid_yes: sortedYes,
@@ -85,9 +117,11 @@ export default function ShiftEditPage() {
       setOriginalSymbol(target.symbol);
 
       setAllShifts(sortedAll.map((s) => s.symbol));
-      setColorMap(Object.fromEntries(sortedAll.map((s) => [s.symbol, s.color])));
+      setColorMap(
+        Object.fromEntries(sortedAll.map((s) => [s.symbol, s.color])),
+      );
       setSubtypeMap(
-        Object.fromEntries(sortedAll.map((s) => [s.symbol, getTone2(s)]))
+        Object.fromEntries(sortedAll.map((s) => [s.symbol, getTone2(s)])),
       );
     }
 
@@ -131,7 +165,7 @@ export default function ShiftEditPage() {
         allShifts={allShifts}
         colorMap={colorMap}
         subtypeMap={subtypeMap}
-        onChange={setShift}
+        onChange={handleChange}
         onSave={save}
         onCancel={() => router.push("/admin/shift")}
       />

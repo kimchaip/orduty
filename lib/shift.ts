@@ -9,6 +9,7 @@ export type Shift = {
   subtype: ShiftSubtype;
   period: ShiftPeriod;
   color: string;
+  subcolor: string;
   require_limit: number;
   booking_limit: number;
   forbid_yes: string[];

@@ -143,7 +143,7 @@ function ShiftCard({
 }) {
   const router = useRouter();
   const tone1 = shift.color;
-  const tone2 = subtypeMap[shift.symbol];
+  const tone2 = shift.subcolor;
 
   function goEdit() {
     router.push(`/admin/shift/${shift.id}`);

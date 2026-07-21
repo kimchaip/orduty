@@ -15,7 +15,7 @@ export function ShiftForm({
   allShifts: string[];
   colorMap: Record<string, string>;
   subtypeMap: Record<string, string>;
-  onChange: (s: Shift) => void;
+  onChange: (field: keyof Shift, value: any) => void;
   onSave: () => void;
   onCancel: () => void;
 }) {
@@ -27,55 +27,48 @@ export function ShiftForm({
         <Input
           label="Name"
           value={shift.name}
-          onChange={(v) => onChange({ ...shift, name: v })}
+          onChange={(v) => onChange("name", v)}
         />
 
         <Input
           label="Symbol"
           value={shift.symbol}
-          onChange={(v) => onChange({ ...shift, symbol: v })}
+          onChange={(v) => onChange("symbol", v)}
         />
 
         <Select<ShiftPeriod>
           label="Period"
           value={shift.period}
           options={["ด", "ช", "บ"]}
-          onChange={(v) => onChange({ ...shift, period: v })}
-        />
-
-        <Input
-          label="Color"
-          type="color"
-          value={shift.color}
-          onChange={(v) => onChange({ ...shift, color: v })}
+          onChange={(v) => onChange("period", v)}
         />
 
         <Select<ShiftType>
           label="Type"
           value={shift.type}
           options={["main", "extend", "free", "summit"]}
-          onChange={(v) => onChange({ ...shift, type: v })}
+          onChange={(v) => onChange("type", v)}
         />
 
         <Select<ShiftSubtype>
           label="Subtype"
           value={shift.subtype}
           options={["-", "leader", "preop", "ortho", "oncall"]}
-          onChange={(v) => onChange({ ...shift, subtype: v })}
+          onChange={(v) => onChange("subtype", v)}
         />
 
         <Input
           label="Require Limit"
           type="number"
           value={shift.require_limit}
-          onChange={(v) => onChange({ ...shift, require_limit: Number(v) })}
+          onChange={(v) => onChange("require_limit", Number(v))}
         />
 
         <Input
           label="Booking Limit"
           type="number"
           value={shift.booking_limit}
-          onChange={(v) => onChange({ ...shift, booking_limit: Number(v) })}
+          onChange={(v) => onChange("booking_limit", Number(v))}
         />
       </div>
 
@@ -86,7 +79,7 @@ export function ShiftForm({
           options={allShifts}
           colorMap={colorMap}
           subtypeMap={subtypeMap}
-          onChange={(v) => onChange({ ...shift, forbid_yes: v })}
+          onChange={(v) => onChange("forbid_yes", v)}
         />
       </TagGroup>
 
@@ -97,7 +90,7 @@ export function ShiftForm({
           options={allShifts.filter((s) => s !== shift.symbol)}
           colorMap={colorMap}
           subtypeMap={subtypeMap}
-          onChange={(v) => onChange({ ...shift, forbid_tdy: v })}
+          onChange={(v) => onChange("forbid_tdy", v)}
         />
       </TagGroup>
 
@@ -108,7 +101,7 @@ export function ShiftForm({
           options={allShifts}
           colorMap={colorMap}
           subtypeMap={subtypeMap}
-          onChange={(v) => onChange({ ...shift, forbid_tmr: v })}
+          onChange={(v) => onChange("forbid_tmr", v)}
         />
       </TagGroup>
 
@@ -176,8 +169,8 @@ function ColorMultiSelect({
         <SymbolTag
           key={o}
           symbol={o}
-          color={colorMap[o] ?? "#666"}
-          subtypeColor={subtypeMap[o] ?? colorMap[o] ?? "#666"}
+          color={colorMap[o]}
+          subtypeColor={subtypeMap[o]}
           active={value.includes(o)}
           onClick={() => toggle(o)}
         />
