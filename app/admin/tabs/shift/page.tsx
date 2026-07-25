@@ -26,6 +26,14 @@ export default function ShiftTabPage() {
         Shift Color Setting
       </Link>
 
+      {/* ปุ่ม setting forbid for Shift */}
+      <Link
+        href="/admin/shift/forbidshiftsetting"
+        className="block w-full bg-amber-600 hover:bg-amber-700 text-white 
+                   px-4 py-3 rounded-lg text-center font-semibold"
+      >
+        Shift Forbid Setting
+      </Link>
     </div>
   );
 }
