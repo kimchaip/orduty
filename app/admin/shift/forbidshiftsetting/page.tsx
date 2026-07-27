@@ -145,7 +145,7 @@ export default function ForbidShiftPage() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="overflow-x-auto w-full">
+        <div className="w-full">
           <table className="min-w-full border border-gray-700 text-sm">
             <thead className="bg-gray-800">
               <tr>
