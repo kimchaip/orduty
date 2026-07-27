@@ -145,81 +145,114 @@ export default function ForbidShiftPage() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <table className="w-full border border-gray-700 text-sm">
-          <thead className="bg-gray-800">
-            <tr>
-              <th className="p-3 border border-gray-700">Title</th>
-              <th className="p-3 border border-gray-700">Symbol</th>
-              <th className="p-3 border border-gray-700">Description</th>
-              <th className="p-3 border border-gray-700">is_forbid</th>
-              <th className="p-3 border border-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rules.map((r) => (
-              <tr key={r.id} className="hover:bg-gray-800 transition-colors">
-                <td className="p-3 border border-gray-700 font-bold text-base tracking-wide">
-                  {r.title}
-                </td>
-
-                <td className="p-3 border border-gray-700 font-mono text-gray-300">
-                  {r.sym}
-                </td>
-
-                <td className="p-3 border border-gray-700 text-gray-300">
-                  {describeSym(r.sym)}
-                </td>
-
-                <td className="p-3 border border-gray-700">
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={r.is_forbid}
-                      onChange={() => toggleForbid(r)}
-                      className="sr-only peer"
-                    />
-
-                    {/* background */}
-                    <div className="w-12 h-6 bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors duration-300 relative">
-                      {/* ball */}
-                      <div
-                        className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow
-                      transition-transform duration-300
-                      peer-checked:translate-x-[24px]"
-                      ></div>
-                    </div>
-                  </label>
-                </td>
-
-                <td className="p-3 border border-gray-700">
-                  <button
-                    onClick={() => openEditModal(r)}
-                    className="mr-2 px-3 py-1 text-xs bg-yellow-500 text-black rounded hover:bg-yellow-400"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteRule(r.id)}
-                    className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-500"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {rules.length === 0 && (
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-full border border-gray-700 text-sm">
+            <thead className="bg-gray-800">
               <tr>
-                <td
-                  colSpan={5}
-                  className="p-3 border border-gray-700 text-center text-gray-400"
-                >
-                  ยังไม่มีกฎ forbidshift
-                </td>
+                <th className="p-3 border border-gray-700 w-50 sm:w-auto">
+                  Title
+                </th>
+                <th className="p-3 border border-gray-700 w-12 sm:w-auto">
+                  is_forbid
+                </th>
+                <th className="p-3 border border-gray-700 w-16 sm:w-auto">
+                  Actions
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {rules.map((r) => (
+                <tr key={r.id} className="hover:bg-gray-800 transition-colors">
+                  {/* Title */}
+                  <td className="p-3 border border-gray-700 font-bold text-base tracking-wide">
+                    {r.title}
+                  </td>
+
+                  {/* is_forbid toggle */}
+                  <td className="p-3 border border-gray-700">
+                    <label className="inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={r.is_forbid}
+                        onChange={() => toggleForbid(r)}
+                        className="sr-only peer"
+                      />
+
+                      <div className="w-12 h-6 bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors duration-300 relative">
+                        <div
+                          className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow
+                  transition-transform duration-300
+                  peer-checked:translate-x-[24px]"
+                        ></div>
+                      </div>
+                    </label>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="p-3 border border-gray-700">
+                    <div className="flex space-x-3">
+                      {/* Edit icon */}
+                      <button
+                        onClick={() => openEditModal(r)}
+                        className="text-yellow-400 hover:text-yellow-300"
+                        title="Edit"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5h2m-1 0v14m-7-7h14"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Delete icon */}
+                      <button
+                        onClick={() => deleteRule(r.id)}
+                        className="text-red-500 hover:text-red-400"
+                        title="Delete"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {rules.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="p-3 border border-gray-700 text-center text-gray-400"
+                  >
+                    ยังไม่มีกฎ forbidshift
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {showModal && (
