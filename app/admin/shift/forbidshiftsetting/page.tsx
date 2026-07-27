@@ -145,17 +145,17 @@ export default function ForbidShiftPage() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="w-full">
-          <table className="min-w-full border border-gray-700 text-sm">
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-full border border-gray-700 text-xs sm:text-sm">
             <thead className="bg-gray-800">
               <tr>
-                <th className="p-3 border border-gray-700 w-50 sm:w-auto">
+                <th className="p-2 border border-gray-700 w-36 sm:w-auto">
                   Title
                 </th>
-                <th className="p-3 border border-gray-700 w-12 sm:w-auto">
+                <th className="p-2 border border-gray-700 w-10 sm:w-auto">
                   is_forbid
                 </th>
-                <th className="p-3 border border-gray-700 w-16 sm:w-auto">
+                <th className="p-2 border border-gray-700 w-10 sm:w-auto">
                   Actions
                 </th>
               </tr>
@@ -165,12 +165,12 @@ export default function ForbidShiftPage() {
               {rules.map((r) => (
                 <tr key={r.id} className="hover:bg-gray-800 transition-colors">
                   {/* Title */}
-                  <td className="p-3 border border-gray-700 font-bold text-base tracking-wide">
+                  <td className="p-2 border border-gray-700 font-semibold">
                     {r.title}
                   </td>
 
-                  {/* is_forbid toggle */}
-                  <td className="p-3 border border-gray-700">
+                  {/* Switch (compact) */}
+                  <td className="p-2 border border-gray-700 text-center">
                     <label className="inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -179,28 +179,28 @@ export default function ForbidShiftPage() {
                         className="sr-only peer"
                       />
 
-                      <div className="w-12 h-6 bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors duration-300 relative">
+                      <div className="w-10 h-5 bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors duration-300 relative">
                         <div
-                          className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow
+                          className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow
                   transition-transform duration-300
-                  peer-checked:translate-x-[24px]"
+                  peer-checked:translate-x-[20px]"
                         ></div>
                       </div>
                     </label>
                   </td>
 
-                  {/* Actions */}
-                  <td className="p-3 border border-gray-700">
-                    <div className="flex space-x-3">
+                  {/* Actions (compact icons) */}
+                  <td className="p-2 border border-gray-700 text-center w-20">
+                    <div className="flex items-center justify-center space-x-1">
                       {/* Edit icon */}
                       <button
                         onClick={() => openEditModal(r)}
-                        className="text-yellow-400 hover:text-yellow-300"
+                        className="text-yellow-400 hover:text-yellow-300 p-1"
                         title="Edit"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
+                          className="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -217,12 +217,12 @@ export default function ForbidShiftPage() {
                       {/* Delete icon */}
                       <button
                         onClick={() => deleteRule(r.id)}
-                        className="text-red-500 hover:text-red-400"
+                        className="text-red-500 hover:text-red-400 p-1"
                         title="Delete"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
+                          className="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
