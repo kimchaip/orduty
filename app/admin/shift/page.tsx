@@ -28,6 +28,19 @@ export default function ShiftList() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // 🔥 deleteShift อยู่ใน scope ของ ShiftList
+  async function deleteShift(id: number) {
+    if (!confirm("ลบเวรนี้จริงไหม?")) return;
+
+    await supabase.from("shift").delete().eq("id", id);
+
+    await supabase.rpc("update_all_forbid");
+
+    const { data } = await supabase.from("shift").select("*");
+    const sorted = sortShifts(data || []);
+    setShifts(sorted);
+  }
+
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from("shift").select("*");
@@ -38,10 +51,7 @@ export default function ShiftList() {
     load();
   }, []);
 
-  // map symbol → color
   const colorMap = Object.fromEntries(shifts.map((s) => [s.symbol, s.color]));
-
-  // map symbol → subtypeColor (tone2)
   const subtypeMap = Object.fromEntries(
     shifts.map((s) => [s.symbol, getTone2(s)])
   );
@@ -105,11 +115,11 @@ export default function ShiftList() {
             shift={s}
             colorMap={colorMap}
             subtypeMap={subtypeMap}
+            deleteShift={deleteShift}   // ✔ ส่งเข้าไป
           />
         ))}
       </div>
 
-      {/* Floating + New Button */}
       {showNewBtn && (
         <button
           onClick={() => router.push("/admin/shift/new")}
@@ -136,14 +146,14 @@ function ShiftCard({
   shift,
   colorMap,
   subtypeMap,
+  deleteShift,
 }: {
   shift: Shift;
   colorMap: Record<string, string>;
   subtypeMap: Record<string, string>;
+  deleteShift: (id: number) => void;   // ✔ รับฟังก์ชัน
 }) {
   const router = useRouter();
-  const tone1 = shift.color;
-  const tone2 = shift.subcolor;
 
   function goEdit() {
     router.push(`/admin/shift/${shift.id}`);
@@ -151,33 +161,39 @@ function ShiftCard({
 
   return (
     <div
+      className="relative bg-gray-800 p-4 rounded-lg border border-gray-700 hover:bg-gray-700 transition cursor-pointer"
       onClick={goEdit}
-      className="relative bg-gray-800 p-4 rounded-lg border border-gray-700 cursor-pointer hover:bg-gray-700 transition"
     >
+      {/* ปุ่ม Delete */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          deleteShift(shift.id!);   // ✔ ใช้งานได้
+        }}
+        className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white text-xs px-2 py-1 rounded"
+      >
+        Delete
+      </button>
+
       {/* Vertical 2-tone bar */}
       <div
         className="absolute left-0 top-0 h-full w-2 rounded-l-lg"
         style={{
           background: `linear-gradient(
             to bottom,
-            ${tone1} 0%,
-            ${tone1} 66%,
-            ${tone2} 66%,
-            ${tone2} 100%
+            ${shift.color} 0%,
+            ${shift.color} 66%,
+            ${shift.subcolor} 66%,
+            ${shift.subcolor} 100%
           )`,
         }}
       />
 
-      {/* Name + Symbol */}
+      {/* Name + Symbol (ลบวงกลมสีออกแล้ว) */}
       <div className="flex justify-between items-center mb-2 pl-3">
         <div className="text-lg font-bold">
-          {shift.name} ({shift.symbol})
+          {shift.name} | {shift.symbol}
         </div>
-
-        <div
-          className="w-6 h-6 rounded-full border border-gray-600"
-          style={{ backgroundColor: shift.color }}
-        />
       </div>
 
       {/* Type + Subtype */}
@@ -266,7 +282,6 @@ function SymbolTag({
     >
       {symbol}
 
-      {/* แถบสีด้านล่าง */}
       <div
         className="absolute left-0 bottom-0 w-full h-1 rounded-b"
         style={{ backgroundColor: subtypeColor }}

@@ -123,8 +123,7 @@ export default function ForbidShiftPage() {
       .eq("id", rule.id);
 
     // 🔥 เรียกฟังก์ชัน update_all_forbid() หลังแก้กฎ
-    const result = await supabase.rpc("update_all_forbid");
-    console.log("update_all_forbid result:", result);
+    await supabase.rpc("update_all_forbid");
 
     // ไม่ต้อง loadRules() เพื่อไม่ให้ switch กระพริบ
   };
