@@ -99,12 +99,14 @@ export default function ForbidShiftPage() {
     }
 
     setShowModal(false);
+    await supabase.rpc("update_all_forbid");
     await loadRules();
   };
 
   const deleteRule = async (id: number) => {
     if (!confirm("ลบกฎนี้จริงไหม?")) return;
     await supabase.from("forbidshift").delete().eq("id", id);
+    await supabase.rpc("update_all_forbid");
     await loadRules();
   };
 
