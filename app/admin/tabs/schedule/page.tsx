@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSearchParams } from "next/navigation";
 
-export default function SchedulePage() {
+export default function ScheduleTabsPage() {
   type CalendarDay = {
     id: number;
     date: string;
