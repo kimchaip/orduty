@@ -23,10 +23,11 @@ export default function SchedulePage() {
   type ScheduleItem = {
     id: number;
     shift_id: number;
+    staff_id: string;
     staff: {
       id: string;
       name: string;
-    } | null;
+    }[];
   };
 
   const searchParams = useSearchParams();
@@ -95,7 +96,7 @@ export default function SchedulePage() {
       .eq("date_id", dateId)
       .order("shift_id");
 
-    setSchedule((data ?? []) as ScheduleItem[]);
+    setSchedule(data ?? []);
   }
 
   async function addSchedule() {
@@ -154,7 +155,7 @@ export default function SchedulePage() {
                   .filter((s) => s.shift_id === shift.id)
                   .map((s) => (
                     <li key={s.id} className="text-gray-200">
-                      {s.staff?.name ?? "—"}
+                      {s.staff[0]?.name ?? "—"}
                     </li>
                   ))}
               </ul>
