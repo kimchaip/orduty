@@ -25,10 +25,14 @@ export default function ScheduleTabsPage() {
   type ScheduleItem = {
     id: number;
     shift_id: number;
-    staff: {
-      id: string;
-      name: string;
-    };
+    staff_id: string;
+  };
+
+  type ScheduleViewItem = {
+    id: number;
+    shift_id: number;
+    staff_id: string;
+    staff_name: string;
   };
 
   const searchParams = useSearchParams();
@@ -40,6 +44,7 @@ export default function ScheduleTabsPage() {
 
   const [selectedDateId, setSelectedDateId] = useState<number | null>(null);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [scheduleView, setScheduleView] = useState<ScheduleViewItem[]>([]);
 
   const [selectedShiftId, setSelectedShiftId] = useState<number | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
@@ -84,19 +89,20 @@ export default function ScheduleTabsPage() {
 
   async function loadSchedule(dateId: number) {
     const { data } = await supabase
-      .from("schedule")
+      .from("schedule_view")
       .select(
         `
       id,
       shift_id,
-      staff ( id, name )
+      staff_id,
+      staff_name
     `,
       )
       .eq("date_id", dateId)
       .order("shift_id")
       .throwOnError();
 
-    setSchedule(data);
+    setScheduleView(data);
   }
 
   async function addSchedule() {
@@ -151,11 +157,11 @@ export default function ScheduleTabsPage() {
               <div className="font-bold text-blue-300">{shift.name}</div>
 
               <ul className="ml-4">
-                {schedule
+                {scheduleView
                   .filter((s) => s.shift_id === shift.id)
                   .map((s) => (
                     <li key={s.id} className="text-gray-200">
-                      {s.staff.name ?? "—"}
+                      {s.staff_name ?? "—"}
                     </li>
                   ))}
               </ul>
