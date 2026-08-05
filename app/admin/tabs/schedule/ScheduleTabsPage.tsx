@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSearchParams } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default function ScheduleTabsPage() {
   type CalendarDay = {
     id: number;
@@ -23,11 +25,10 @@ export default function ScheduleTabsPage() {
   type ScheduleItem = {
     id: number;
     shift_id: number;
-    staff_id: string;
     staff: {
       id: string;
       name: string;
-    }[];
+    };
   };
 
   const searchParams = useSearchParams();
@@ -43,12 +44,11 @@ export default function ScheduleTabsPage() {
   const [selectedShiftId, setSelectedShiftId] = useState<number | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
 
-  // Load initial data
   useEffect(() => {
     loadCalendar();
     loadShifts();
     loadStaff();
-  }, []);
+  },[]);
 
   useEffect(() => {
     if (dateId) {
@@ -87,16 +87,16 @@ export default function ScheduleTabsPage() {
       .from("schedule")
       .select(
         `
-        id,
-        shift_id,
-        staff_id,
-        staff ( id, name )
-      `,
+      id,
+      shift_id,
+      staff ( id, name )
+    `,
       )
       .eq("date_id", dateId)
-      .order("shift_id");
+      .order("shift_id")
+      .throwOnError();
 
-    setSchedule(data ?? []);
+    setSchedule(data);
   }
 
   async function addSchedule() {
@@ -155,7 +155,7 @@ export default function ScheduleTabsPage() {
                   .filter((s) => s.shift_id === shift.id)
                   .map((s) => (
                     <li key={s.id} className="text-gray-200">
-                      {s.staff[0]?.name ?? "—"}
+                      {s.staff.name ?? "—"}
                     </li>
                   ))}
               </ul>
