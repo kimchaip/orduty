@@ -17,8 +17,12 @@ export default function MonthView() {
   }, [year, month]);
 
   async function loadCalendar() {
-    const firstDay = new Date(year, month, 1).toISOString().slice(0, 10);
-    const lastDay = new Date(year, month + 1, 0).toISOString().slice(0, 10);
+    const firstWeekDay = new Date(year, month, 1).getDay()-1;
+    const lastWeekDay = new Date(year, month + 1, 0).getDay()-1;
+    const firstDay = new Date(year, month, 1-firstWeekDay).toISOString().slice(0, 10);
+    const lastDay = new Date(year, month + 1, 0+(6-lastWeekDay)).toISOString().slice(0, 10);
+
+    console.log(firstWeekDay);
 
     const { data } = await supabase
       .from("calendar")
