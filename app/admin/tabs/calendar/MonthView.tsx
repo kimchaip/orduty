@@ -6,7 +6,12 @@ import { CalendarDay } from "./types";
 import CalendarHeader from "./components/CalendarHeader";
 import CalendarCell from "./components/CalendarCell";
 
-export default function MonthView() {
+interface MonthViewProps {
+  mode: "month" | "week";
+  setMode: (m: "month" | "week") => void;
+}
+
+export default function MonthView({ mode, setMode }: MonthViewProps) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -19,10 +24,9 @@ export default function MonthView() {
   async function loadCalendar() {
     const firstWeekDay = new Date(year, month, 1).getDay()-1;
     const lastWeekDay = new Date(year, month + 1, 0).getDay()-1;
+
     const firstDay = new Date(year, month, 1-firstWeekDay).toISOString().slice(0, 10);
     const lastDay = new Date(year, month + 1, 0+(6-lastWeekDay)).toISOString().slice(0, 10);
-
-    console.log(firstWeekDay);
 
     const { data } = await supabase
       .from("calendar")
@@ -62,6 +66,8 @@ export default function MonthView() {
         month={month}
         prevMonth={prevMonth}
         nextMonth={nextMonth}
+        mode={mode}
+        setMode={setMode}
       />
 
       <div className="grid grid-cols-7 gap-1">

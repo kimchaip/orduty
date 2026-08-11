@@ -8,9 +8,11 @@ import WeekHeader from "./components/WeekHeader";
 
 interface WeekViewProps {
   startDate: string;
+  mode: "month" | "week";
+  setMode: (m: "month" | "week") => void;
 }
 
-export default function WeekView({ startDate }: WeekViewProps) {
+export default function WeekView({ startDate, mode, setMode }: WeekViewProps) {
   const [days, setDays] = useState<CalendarDay[]>([]);
   const [currentStart, setCurrentStart] = useState(startDate);
 
@@ -54,6 +56,8 @@ export default function WeekView({ startDate }: WeekViewProps) {
         startDate={currentStart}
         prevWeek={prevWeek}
         nextWeek={nextWeek}
+        mode={mode}
+        setMode={setMode}
       />
 
       <div className="grid grid-cols-7 gap-2">
